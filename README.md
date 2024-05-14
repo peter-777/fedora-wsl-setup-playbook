@@ -23,7 +23,7 @@
 - ansible
 - pathon3-passlib
 
-`dnf install ansible python3-passlib`
+`dnf install git ansible python3-passlib`
 
 ## Test play in container
 
