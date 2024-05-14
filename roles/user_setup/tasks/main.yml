@@ -1,0 +1,21 @@
+---
+- name: Add user
+  ansible.builtin.import_tasks: create.yml
+
+- name: Edit wsl.conf
+  ansible.builtin.import_tasks: edit_wsl_conf.yml
+
+- name: Customize .bashrc
+  ansible.builtin.import_tasks: customize_bashrc.yml
+
+- name: Quarkus Cli
+  ansible.builtin.import_tasks: install_quarkuscli.yml
+
+- name: Pyenv
+  ansible.builtin.import_tasks: install_pyenv.yml
+
+- name: Config git
+  ansible.builtin.import_tasks: configure_git.yml
+
+- name: Config mounts
+  ansible.builtin.import_tasks: configure_mounts.yml

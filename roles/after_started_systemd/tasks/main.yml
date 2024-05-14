@@ -1,0 +1,6 @@
+---
+- name: Set Locale
+  ansible.builtin.import_tasks: set_locale.yml
+
+- name: Set timezone
+  ansible.builtin.import_tasks: set_timezone.yml

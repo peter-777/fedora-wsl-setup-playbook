@@ -1,0 +1,4 @@
+---
+ansible_host: testcontainer
+ansible_connection: containers.podman.podman
+ansible_python_interpreter: /usr/bin/env python3

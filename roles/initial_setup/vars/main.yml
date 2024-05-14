@@ -1,0 +1,34 @@
+---
+initial_setup_packages:
+  prerequire:
+    - man
+    - man-pages
+    - dnf5
+    - dnf5-plugins
+    - python3-libdnf5
+    - dnf-plugins-core # temporary for copr modules
+
+  main:
+    - "*"
+    - shadow-utils
+    - util-linux
+    - passwd
+    - cracklib-dicts
+    - git
+    - vim
+    - jq
+    - micro
+    - procps-ng
+    - iputils
+    - wget
+    - which
+    - rsync
+    - python3-passlib
+    - neofetch
+    - bash-completion
+    - podman
+    - langpacks-ja
+    - temurin-21-jdk
+    - pipx
+    - wslu
+    - jbang

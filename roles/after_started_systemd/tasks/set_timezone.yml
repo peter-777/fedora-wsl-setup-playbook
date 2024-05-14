@@ -1,0 +1,11 @@
+---
+- name: Check timezone {{ after_started_systemd_timezone }}
+  ansible.builtin.command: timedatectl status
+  register: timedatectl_result
+  check_mode: false
+  changed_when: false
+
+- name: Set timezone {{ after_started_systemd_timezone }}
+  ansible.builtin.command: timedatectl set-timezone {{ after_started_systemd_timezone }}
+  when: after_started_systemd_timezone not in timedatectl_result.stdout
+  changed_when: true

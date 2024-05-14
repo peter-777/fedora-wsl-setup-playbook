@@ -1,0 +1,22 @@
+---
+- name: Edit wsl.conf systemd enabled
+  community.general.ini_file:
+    path: /etc/wsl.conf
+    create: true
+    section: boot
+    option: systemd
+    value: true
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Edit wsl.conf mount make rshared
+  community.general.ini_file:
+    path: /etc/wsl.conf
+    create: true
+    section: boot
+    option: command
+    value: '"mount --make-rshared /"'
+    owner: root
+    group: root
+    mode: "0644"

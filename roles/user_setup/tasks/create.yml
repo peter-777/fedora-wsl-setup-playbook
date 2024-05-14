@@ -1,0 +1,9 @@
+---
+- name: Add user
+  ansible.builtin.user:
+    name: "{{ user_name }}"
+    password: "{{ user_password | password_hash('sha512', user_salt) }}"
+    groups:
+      - wheel
+    append: true
+  register: userinfo

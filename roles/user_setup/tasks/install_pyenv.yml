@@ -1,0 +1,39 @@
+---
+- name: Check installed pyenv
+  become: true
+  become_user: "{{ user_name }}"
+  ansible.builtin.stat:
+    path: ~/.pyenv
+  register: check_pyenv
+
+- name: Ensure a temporary directory for download exists
+  become: true
+  become_user: "{{ user_name }}"
+  ansible.builtin.tempfile:
+    state: directory
+  register: temp_dir
+  when: not check_pyenv.stat.exists
+
+- name: Get pyenv installer
+  become: true
+  become_user: "{{ user_name }}"
+  ansible.builtin.get_url:
+    url: https://pyenv.run
+    dest: "{{ temp_dir.path }}/pyenv.run.sh"
+    mode: "0700"
+  register: pyenv_installer
+  when: not check_pyenv.stat.exists
+
+- name: Run pyenv installer
+  become: true
+  become_user: "{{ user_name }}"
+  ansible.builtin.command:
+    cmd: "{{ pyenv_installer.dest }}"
+    creates: ~/.pyenv
+  when: not check_pyenv.stat.exists
+
+- name: Remove the temporary file
+  ansible.builtin.file:
+    path: "{{ temp_dir.path }}"
+    state: absent
+  when: temp_dir.path is defined

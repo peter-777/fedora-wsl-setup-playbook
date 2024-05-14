@@ -1,0 +1,11 @@
+---
+- name: Check Locale {{ after_started_systemd_locale }}
+  ansible.builtin.command: localectl status
+  register: localectl_result
+  check_mode: false
+  changed_when: false
+
+- name: Set Locale {{ after_started_systemd_locale }}
+  ansible.builtin.command: localectl set-locale LANG={{ after_started_systemd_locale }}
+  changed_when: true
+  when: after_started_systemd_locale not in localectl_result.stdout

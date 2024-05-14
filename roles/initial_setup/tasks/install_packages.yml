@@ -1,0 +1,23 @@
+---
+- name: Enable Fedora Copr for wslu
+  community.general.copr:
+    name: wslutilities/wslu
+
+- name: Enable Fedora Copr for jbang
+  community.general.copr:
+    name: "@jbangdev/jbang"
+
+- name: Add Adoptium Repository
+  ansible.builtin.yum_repository:
+    name: Adoptium
+    description: Adoptioum repo
+    baseurl: https://packages.adoptium.net/artifactory/rpm/{{ ansible_facts['distribution'].lower() }}/$releasever/$basearch
+    enabled: true
+    gpgcheck: true
+    gpgkey:
+      - https://packages.adoptium.net/artifactory/api/gpg/key/public
+
+- name: Install packages
+  ansible.builtin.dnf5:
+    name: "{{ initial_setup_packages['main'] }}"
+    state: latest

@@ -1,0 +1,5 @@
+---
+- name: Reinstall packages
+  ansible.builtin.shell:
+    cmd: for pkg in $(dnf5 repoquery --installed --qf "%{name}\n"); do dnf5 reinstall -qy $pkg; done
+  changed_when: true

@@ -1,0 +1,9 @@
+{
+    "ansible.python.interpreterPath": "/bin/python3",
+    "ansible.validation.lint.arguments": "--fix",
+    "files.associations": {
+        "**/*vars/*.yml": "ansible",
+        "**/tasks/*.yml": "ansible",
+        "**/handlers/*.yml": "ansible",
+    }
+}

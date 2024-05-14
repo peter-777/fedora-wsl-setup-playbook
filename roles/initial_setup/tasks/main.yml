@@ -1,0 +1,9 @@
+---
+- name: Initial tasks
+  ansible.builtin.import_tasks: prerequire.yml
+
+- name: Packages tasks
+  ansible.builtin.import_tasks: install_packages.yml
+
+- name: WSL conf
+  ansible.builtin.import_tasks: edit_wsl_conf.yml

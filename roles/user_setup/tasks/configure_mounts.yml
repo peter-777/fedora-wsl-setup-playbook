@@ -1,0 +1,8 @@
+---
+- name: Configure fstab for Box Drive
+  ansible.posix.mount:
+    path: /mnt/box
+    src: "{{ box_drive_path }}"
+    fstype: drvfs
+    opts: defaults,uid={{ userinfo.uid }},gid={{ userinfo.group }}
+    state: present

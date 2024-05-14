@@ -1,0 +1,3 @@
+---
+after_started_systemd_locale: ja_JP.utf8
+after_started_systemd_timezone: Asia/Tokyo

@@ -1,0 +1,20 @@
+---
+- name: Replace dnf config
+
+  community.general.ini_file:
+    path: /etc/dnf/dnf.conf
+    create: false
+    section: main
+    option: tsflags
+    value: nodocs
+    state: absent
+
+- name: Install man and dnf5
+  ansible.builtin.dnf:
+    name: "{{ initial_setup_packages['prerequire'] }}"
+    state: latest
+  notify:
+    - Reinstall packages
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

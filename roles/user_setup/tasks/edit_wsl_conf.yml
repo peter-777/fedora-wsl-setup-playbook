@@ -1,0 +1,10 @@
+---
+- name: Edit wsl.conf
+  community.general.ini_file:
+    path: /etc/wsl.conf
+    section: user
+    option: default
+    value: "{{ user_name }}"
+    owner: root
+    group: root
+    mode: "0644"
