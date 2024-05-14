@@ -32,3 +32,4 @@ initial_setup_packages:
     - pipx
     - wslu
     - jbang
+    - socat
