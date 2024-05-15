@@ -1,6 +1,7 @@
 PS1="[\[\033[01;32m\]\u@\h \[\033[01;34m\]\W\[\033[00m\]]$ "      
       
 # Configure ssh forwarding
+mkdir -p $HOME/.ssh/
 export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
 # need `ps -ww` to get non-truncated command for matching
 # use square brackets to generate a regex match for the process we want but that doesn't match the grep command running it!
