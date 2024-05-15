@@ -1,6 +1,5 @@
 ---
-- name: Replace dnf config
-
+- name: Remove nodocs
   community.general.ini_file:
     path: /etc/dnf/dnf.conf
     create: false
@@ -8,6 +7,15 @@
     option: tsflags
     value: nodocs
     state: absent
+  notify:
+    - Reinstall packages
+
+- name: Remove macros.image-language-conf
+  ansible.builtin.file:
+    path: /etc/rpm/macros.image-language-conf
+    state: absent
+  notify:
+    - Reinstall packages
 
 - name: Install man and dnf5
   ansible.builtin.dnf:
