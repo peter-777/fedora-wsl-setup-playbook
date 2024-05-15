@@ -23,7 +23,6 @@ initial_setup_packages:
     - wget
     - which
     - rsync
-    - python3-passlib
     - neofetch
     - bash-completion
     - podman
@@ -32,4 +31,17 @@ initial_setup_packages:
     - pipx
     - wslu
     - jbang
+    # for npipereray
     - socat
+    # for pyenv install(build) CPytnon
+    - make
+    - automake
+    - gcc
+    - gcc-c++
+    - zlib-ng-compat-devel
+    - openssl-devel
+    - bzip2-devel
+    - readline-devel
+    - sqlite-devel
+    - xz-devel
+    - libffi-devel
