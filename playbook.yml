@@ -50,5 +50,11 @@
         image: registry.fedoraproject.org/fedora:latest
         command: sleep infinity
         detach: true
+      tags:
+        - initial
+        - user
     - name: Gather facts
       ansible.builtin.gather_facts:
+      tags:
+        - initial
+        - user
