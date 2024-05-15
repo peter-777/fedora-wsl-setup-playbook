@@ -31,6 +31,7 @@ initial_setup_packages:
     - pipx
     - wslu
     - jbang
+    - zip
     # for npipereray
     - socat
     # for pyenv install(build) CPytnon
@@ -38,9 +39,8 @@ initial_setup_packages:
     - automake
     - gcc
     - gcc-c++
-    - zlib-ng-compat-devel
+    - tk-devel
     - openssl-devel
-    - bzip2-devel
     - readline-devel
     - sqlite-devel
     - xz-devel
