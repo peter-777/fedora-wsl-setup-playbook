@@ -6,6 +6,14 @@
   changed_when: false
 
 - name: Set Locale {{ after_started_systemd_locale }}
-  ansible.builtin.command: localectl set-locale LANG={{ after_started_systemd_locale }}
+  ansible.builtin.command: localectl set-locale {{ after_started_systemd_locale }}
   changed_when: true
-  when: after_started_systemd_locale not in localectl_result.stdout
+  when: "'LANG=' + after_started_systemd_locale not in localectl_result.stdout"
+
+# As a workaround, create a symbolic link to /etc/default/locale.
+# WSL's systemd deviates from its original behavior and tries to export the contents of /etc/default/locale.
+- name: Creates a symbolic link to /etc/default/locale
+  ansible.builtin.file:
+    src: /etc/locale.conf
+    dest: /etc/default/locale
+    state: link
