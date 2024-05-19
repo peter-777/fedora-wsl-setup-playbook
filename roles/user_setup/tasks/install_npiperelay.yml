@@ -1,0 +1,98 @@
+---
+- name: Fetch latest npiperelay tag
+  when: (npiperelay_version is not defined) or (npiperelay_version == 'latest')
+  run_once: true
+  block:
+    - name: Determine latest GitHub release (local)
+      delegate_to: localhost
+      ansible.builtin.uri:
+        url: https://api.github.com/repos/albertony/npiperelay/releases/latest
+        body_format: json
+      register: _github_release
+      until: _github_release.status == 200
+      retries: 5
+
+    - name: Set npiperelay_version
+      ansible.builtin.set_fact:
+        npiperelay_version: "{{ _github_release.json.tag_name }}"
+
+- name: Set facts bin dir
+  ansible.builtin.set_fact:
+    npiperelay_bin_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}/.npiperelay/bin"
+    local_bin_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}/.local/bin"
+
+- name: Set facts bin
+  ansible.builtin.set_fact:
+    npiprelay_bin: "{{ npiperelay_bin_dir }}/npiperelay.exe-{{ npiperelay_version }}"
+
+- name: Check already exists npiperelay.exe-{{ npiperelay_version }}
+  ansible.builtin.stat:
+    path: "{{ npiprelay_bin }}"
+  register: check_npiperelay
+
+- name: Install npiperelay {{ npiperelay_version }}
+  when: not check_npiperelay.stat.exists
+  block:
+    - name: Ensure a temporary directory for download exists
+      ansible.builtin.tempfile:
+        state: directory
+      register: temp_dir
+      # when: not check_pyenv.stat.exists
+
+    - name: Download and verify SHA256 checksum
+      ansible.builtin.get_url:
+        url: https://github.com/albertony/npiperelay/releases/download/{{ npiperelay_version }}/npiperelay_windows_amd64.zip
+        dest: "{{ temp_dir.path }}"
+        mode: "0700"
+        checksum: sha256:https://github.com/albertony/npiperelay/releases/download/{{ npiperelay_version }}/npiperelay_checksums.txt
+
+    - name: Unarchive zip
+      ansible.builtin.unarchive:
+        remote_src: true
+        src: "{{ temp_dir.path }}/npiperelay_windows_amd64.zip"
+        dest: "{{ temp_dir.path }}"
+
+    - name: Ensure a {{ npiperelay_bin_dir }}
+      ansible.builtin.file:
+        path: "{{ npiperelay_bin_dir }}"
+        mode: "0755"
+        state: directory
+
+    - name: Ensure a {{ local_bin_dir }}
+      ansible.builtin.file:
+        path: "{{ local_bin_dir }}"
+        mode: "0755"
+        state: directory
+
+    - name: List old version
+      ansible.builtin.find:
+        paths:
+          - "{{ npiperelay_bin_dir }}"
+        patterns:
+          - npiperelay.exe-*
+      register: match_result
+
+    - name: Remove old version
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      with_items: "{{ match_result.files }}"
+
+    - name: Copy binary to {{ npiprelay_bin }}
+      ansible.builtin.copy:
+        remote_src: true
+        src: "{{ temp_dir.path }}/npiperelay.exe"
+        dest: "{{ npiprelay_bin }}"
+        mode: "0754"
+
+    - name: Creates a symbolic link to {{ local_bin_dir }}
+      ansible.builtin.file:
+        src: "{{ npiprelay_bin }}"
+        dest: "{{ local_bin_dir }}/npiperelay.exe"
+        state: link
+
+    - name: Remove the temporary directory
+      ansible.builtin.file:
+        path: "{{ temp_dir.path }}"
+        state: absent
+      when: temp_dir.path is defined

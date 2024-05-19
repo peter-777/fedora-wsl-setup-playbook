@@ -1,7 +1,5 @@
 ---
 - name: Add Block to .bashrc
-  become: true
-  become_user: "{{ user_name }}"
   ansible.builtin.blockinfile:
     path: ~/.bashrc
     prepend_newline: true

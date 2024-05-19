@@ -1,7 +1,5 @@
 ---
 - name: Install quarkus cli
-  become: true
-  become_user: "{{ user_name }}"
   ansible.builtin.shell:
     cmd: |
       jbang trust add https://repo1.maven.org/maven2/io/quarkus/quarkus-cli/
