@@ -27,3 +27,6 @@
     - name: Npiperelay
       ansible.builtin.import_tasks: install_npiperelay.yml
       tags: npiperelay
+
+    - name: Docker Compose
+      ansible.builtin.import_tasks: install_compose.yml

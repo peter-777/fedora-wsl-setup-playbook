@@ -1,0 +1,83 @@
+---
+- name: Fetch latest compose tag
+  when: (compose_version is not defined) or (compose_version == 'latest')
+  run_once: true
+  block:
+    - name: Determine latest GitHub release (local)
+      delegate_to: localhost
+      ansible.builtin.uri:
+        url: https://api.github.com/repos/docker/compose/releases/latest
+        body_format: json
+      register: _github_release
+      until: _github_release.status == 200
+      retries: 5
+
+    - name: Set compose_version
+      ansible.builtin.set_fact:
+        compose_version: "{{ _github_release.json.tag_name }}"
+
+- name: Set facts bin dir
+  ansible.builtin.set_fact:
+    compose_bin_dir: ~/.docker/cli-plugins
+
+- name: Set facts bin
+  ansible.builtin.set_fact:
+    compose_bin: "{{ compose_bin_dir }}/docker-compose"
+
+- name: Check already exists {{ compose_bin }}
+  ansible.builtin.stat:
+    path: "{{ compose_bin }}"
+  register: check_compose
+
+- name: Get installed compose version
+  ansible.builtin.command:
+    cmd: "{{ compose_bin }} version --format json"
+  register: compose_exists
+  changed_when: false
+  when: check_compose.stat.exists
+
+- name: Set facts compose version
+  ansible.builtin.set_fact:
+    compose_exists_version: "{{ (compose_exists.stdout | from_json).version }}"
+  when: check_compose.stat.exists
+
+- name: Install compose {{ compose_version }}
+  when: not check_compose.stat.exists or compose_exists_version != compose_version
+  block:
+    - name: Ensure a temporary directory for download exists
+      ansible.builtin.tempfile:
+        state: directory
+      register: temp_dir
+      # when: not check_pyenv.stat.exists
+
+    - name: Download and verify SHA256 checksum
+      ansible.builtin.get_url:
+        url: https://github.com/docker/compose/releases/download/{{ compose_version }}/docker-compose-linux-x86_64
+        dest: "{{ temp_dir.path }}"
+        mode: "0700"
+        checksum: sha256:https://github.com/docker/compose/releases/download/{{ compose_version }}/checksums.txt
+
+    - name: Ensure a {{ compose_bin_dir }}
+      ansible.builtin.file:
+        path: "{{ compose_bin_dir }}"
+        mode: "0755"
+        state: directory
+
+    - name: Remove old version
+      ansible.builtin.file:
+        path: "{{ compose_bin }}"
+        state: absent
+      when: check_compose.stat.exists
+
+    - name: Copy binary to {{ compose_bin }}
+      ansible.builtin.copy:
+        remote_src: true
+        src: "{{ temp_dir.path }}/docker-compose-linux-x86_64"
+        dest: "{{ compose_bin }}"
+        mode: "0754"
+
+    - name: Remove the temporary directory
+      ansible.builtin.file:
+        path: "{{ temp_dir.path }}"
+        state: absent
+      when: temp_dir.path is defined
