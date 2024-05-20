@@ -1,0 +1,26 @@
+---
+- name: Ensure a systemd user directory
+  ansible.builtin.file:
+    path: ~/.config/systemd/user/
+    mode: "0755"
+    state: directory
+
+- name: Upload Socket unit
+  ansible.builtin.template:
+    src: templates/ssh-agent-npiperelay.socket.j2
+    dest: ~/.config/systemd/user/ssh-agent-npiperelay.socket
+    mode: "0644"
+
+- name: Upload Service unit
+  ansible.builtin.template:
+    src: templates/ssh-agent-npiperelay@.service.j2
+    dest: ~/.config/systemd/user/ssh-agent-npiperelay@.service
+    mode: "0644"
+
+- name: Enable Socket
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+    scope: user
+    name: ssh-agent-npiperelay.socket
+    enabled: true
+    state: started

@@ -1,0 +1,11 @@
+[Unit]
+Description=ssh-agent relay socket
+
+[Socket]
+ListenStream=%t/ssh-relay/ssh-agent.sock
+SocketMode=0600
+DirectoryMode=0700
+Accept=True
+
+[Install]
+WantedBy=sockets.target

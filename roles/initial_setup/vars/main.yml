@@ -32,8 +32,6 @@ initial_setup_packages:
     - wslu
     - jbang
     - zip
-    # for npipereray
-    - socat
     # for pyenv install(build) CPytnon
     - make
     - automake
