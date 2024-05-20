@@ -18,8 +18,8 @@
 
 - name: Set facts bin dir
   ansible.builtin.set_fact:
-    npiperelay_bin_dir: "~/.npiperelay/bin"
-    local_bin_dir: "~/.local/bin"
+    npiperelay_bin_dir: ~/.npiperelay/bin
+    local_bin_dir: ~/.local/bin
 
 - name: Set facts bin
   ansible.builtin.set_fact:
