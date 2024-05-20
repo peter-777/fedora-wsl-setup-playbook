@@ -37,7 +37,6 @@
       ansible.builtin.tempfile:
         state: directory
       register: temp_dir
-      # when: not check_pyenv.stat.exists
 
     - name: Download and verify SHA256 checksum
       ansible.builtin.get_url:
