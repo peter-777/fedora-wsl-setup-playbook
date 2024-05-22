@@ -7,6 +7,7 @@ initial_setup_packages:
     - dnf5-plugins
     - python3-libdnf5
     - dnf-plugins-core # temporary for copr modules
+    - groff # temporarily add. Due to unknown reasons, installing groff fails with dnf5.
 
   main:
     - "*"
