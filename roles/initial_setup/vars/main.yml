@@ -32,6 +32,7 @@ initial_setup_packages:
     - wslu
     - jbang
     - zip
+    - groff
     # for pyenv install(build) CPytnon
     - make
     - automake
