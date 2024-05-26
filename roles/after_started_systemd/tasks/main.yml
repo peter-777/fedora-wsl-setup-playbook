@@ -11,3 +11,6 @@
   block:
     - name: SSH-Agent
       ansible.builtin.import_tasks: npiperelay_socket.yml
+
+    - name: Podman Socket
+      ansible.builtin.import_tasks: podman_socket.yml
