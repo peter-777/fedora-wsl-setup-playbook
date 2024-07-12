@@ -1,0 +1,46 @@
+---
+- name: Check installed rye
+  ansible.builtin.stat:
+    path: ~/.rye
+  register: check_rye
+
+- name: Instell rye
+  when: not check_rye.stat.exists
+  block:
+    - name: Ensure a temporary directory for download exists
+      ansible.builtin.tempfile:
+        state: directory
+      register: temp_dir
+
+    - name: Get rye installer
+      ansible.builtin.get_url:
+        url: https://rye.astral.sh/get
+        dest: "{{ temp_dir.path }}/rye.get.sh"
+        mode: "0700"
+      register: rye_installer
+
+    - name: Run rye installer
+      ansible.builtin.command:
+        cmd: "{{ rye_installer.dest }}"
+        creates: ~/.rye
+      environment:
+        RYE_INSTALL_OPTION: --yes
+
+    - name: Ensure a directory for bash-completion
+      ansible.builtin.file:
+        path: ~/.local/share/bash-completion/completions
+        state: directory
+        mode: "0755"
+
+    - name: Set Shell Completion
+      ansible.builtin.shell:
+        cmd: |
+          source ~/.profile
+          rye self completion > ~/.local/share/bash-completion/completions/rye.bash
+      changed_when: true
+
+    - name: Remove the temporary directory
+      ansible.builtin.file:
+        path: "{{ temp_dir.path }}"
+        state: absent
+      when: temp_dir.path is defined

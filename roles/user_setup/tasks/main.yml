@@ -18,8 +18,8 @@
     - name: Quarkus Cli
       ansible.builtin.import_tasks: install_quarkuscli.yml
 
-    - name: Pyenv
-      ansible.builtin.import_tasks: install_pyenv.yml
+    - name: Rye
+      ansible.builtin.import_tasks: install_rye.yml
 
     - name: Config git
       ansible.builtin.import_tasks: configure_git.yml

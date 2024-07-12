@@ -6,7 +6,5 @@ export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/ssh-relay/ssh-agent.sock
 # Podman socket. Required for launching Testcontainers from Quarkus.
 export DOCKER_HOST=unix://$(podman info --format '{{.Host.RemoteSocket.Path}}')
 
-# pyenv
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+# Add Rye Shims to Path
+. "$HOME/.rye/env"
