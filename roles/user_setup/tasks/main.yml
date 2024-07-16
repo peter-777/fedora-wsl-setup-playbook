@@ -24,9 +24,11 @@
     - name: Config git
       ansible.builtin.import_tasks: configure_git.yml
 
-    - name: Npiperelay
-      ansible.builtin.import_tasks: install_npiperelay.yml
-      tags: npiperelay
+    # - name: Npiperelay
+    #   ansible.builtin.import_tasks: install_npiperelay.yml
+
+    - name: Add Shell Alias
+      ansible.builtin.import_tasks: add_alias.yml
 
     - name: Docker Compose
       ansible.builtin.import_tasks: install_compose.yml

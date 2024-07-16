@@ -1,0 +1,12 @@
+---
+- name: Ensure a ~/.bashrc.d
+  ansible.builtin.file:
+    path: ~/.bashrc.d
+    mode: "0755"
+    state: directory
+
+- name: Upload Alias file
+  ansible.builtin.template:
+    src: templates/alias.sh.j2
+    dest: ~/.bashrc.d/alias.sh
+    mode: "0755"

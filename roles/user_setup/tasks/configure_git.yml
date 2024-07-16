@@ -22,3 +22,9 @@
     name: init.defaultBranch
     scope: global
     value: main
+
+- name: Add core.sshCommand to ~/.gitconfig
+  community.general.git_config:
+    name: core.sshCommand
+    scope: global
+    value: ssh.exe
