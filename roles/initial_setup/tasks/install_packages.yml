@@ -1,4 +1,20 @@
 ---
+- name: Set max parallel downloads for DNF
+  community.general.ini_file:
+    path: /etc/dnf/dnf.conf
+    create: false
+    section: main
+    option: max_parallel_downloads
+    value: 5
+
+- name: Enable fastestmirror for DNF
+  community.general.ini_file:
+    path: /etc/dnf/dnf.conf
+    create: false
+    section: main
+    option: fastestmirror
+    value: false
+
 - name: Enable Fedora Copr for wslu
   community.general.copr:
     name: wslutilities/wslu
@@ -17,7 +33,14 @@
     gpgkey:
       - https://packages.adoptium.net/artifactory/api/gpg/key/public
 
+- name: Update packages
+  ansible.builtin.dnf5:
+    name: "*"
+    update_cache: true
+    state: latest
+
 - name: Install packages
   ansible.builtin.dnf5:
     name: "{{ initial_setup_packages['main'] }}"
+    update_cache: true
     state: latest

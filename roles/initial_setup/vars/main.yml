@@ -10,7 +10,6 @@ initial_setup_packages:
     - groff # temporarily add. Due to unknown reasons, installing groff fails with dnf5.
 
   main:
-    - "*"
     - shadow-utils
     - util-linux
     - passwd

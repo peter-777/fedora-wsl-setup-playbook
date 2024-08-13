@@ -1,28 +1,26 @@
 ---
-- name: Remove nodocs
-  community.general.ini_file:
-    path: /etc/dnf/dnf.conf
-    create: false
-    section: main
-    option: tsflags
-    value: nodocs
-    state: absent
+- name: Pre package install
   notify:
     - Reinstall packages
+  block:
+    - name: Remove nodocs
+      community.general.ini_file:
+        path: /etc/dnf/dnf.conf
+        create: false
+        section: main
+        option: tsflags
+        value: nodocs
+        state: absent
 
-- name: Remove macros.image-language-conf
-  ansible.builtin.file:
-    path: /etc/rpm/macros.image-language-conf
-    state: absent
-  notify:
-    - Reinstall packages
+    - name: Remove macros.image-language-conf
+      ansible.builtin.file:
+        path: /etc/rpm/macros.image-language-conf
+        state: absent
 
-- name: Install man and dnf5
-  ansible.builtin.dnf:
-    name: "{{ initial_setup_packages['prerequire'] }}"
-    state: latest
-  notify:
-    - Reinstall packages
+    - name: Install man and dnf5
+      ansible.builtin.dnf:
+        name: "{{ initial_setup_packages['prerequire'] }}"
+        state: latest
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
