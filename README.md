@@ -1,44 +1,84 @@
-# How to Play.
+[日本語のREADME](./README_ja.md)
 
-1. Activate the distribution by loading the fedora-rootfs using `wsl --import`.
-1. Log into the distribution and install the packages listed in Requirements.
-1. Check out repository.
+Here is a machine translation of the above Japanese text. Apologies for any mistakes. 
+
+---
+
+# Fedora WSL Setup Playbook
+
+This is an Ansible playbook for setting up Fedora as a WSL distribution. It handles the setup within the distribution after importing a container-based rootfs with `wsl --import ...`.
+
+This playbook performs the following major configurations:
+
+1. Initial Setup (Role: initial_setup)
+    1. Configure `man`
+    1. Install packages
+    1. Enable systemd for WSL
+1. General User Setup (Role: user_setup)
+    1. Create and register the user as the default for WSL
+    1. Mount Box Drive
+    1. Customize `bashrc` and `.gitconfig` (including Windows SSH Agent integration)
+    1. Install tools outside of DNF
+1. Post-Systemd Startup Setup (Role: after_started_systemd)
+    1. Configure locale and timezone
+    1. Enable services
+
+For details, refer to the `main.yml` of each role.
+
+## How to Play
+
+1. Import the rootfs of Fedora using `wsl --import xxx yyy`.
+1. Install the packages required to execute the playbook:
+
+    ```sh
+    dnf install git ansible python3-passlib
+    ```
+
+1. Clone this repository:
 
     ```sh
     git clone https://github.com/peter-777/fedora-wsl-setup-playbook.git && \
     cd ./fedora-wsl-setup-playbook
     ```
 
-1. Execute the following command.
+1. Execute the playbook. Details of the command parameters are provided below.
 
-    `ansible-playbook -i inventories/hosts.ini -l fedora playbook.yml`
+    ```sh
+    ansible-playbook -l <environment> playbook.yml -e @private.yml --ask-vault-pass
+    ```
 
-1. After executing `wsl --shutdown`, log in again to the distribution as root and execute the following command.
+1. Shut down WSL using `wsl --shutdown`, restart the distribution, and then execute the following as the root user:
 
-    `ansible-playbook -i inventories/hosts.ini -l fedora playbook.yml --tags after-started-systemd`
+    ```sh
+    ansible-playbook -l fedora playbook.yml --tags after-started-systemd -e @private.yml --ask-vault-pass
+    ```
 
-## Requirements
+## Parameters
 
-- git
-- ansible
-- pathon3-passlib
+| Parameter | Description |
+| - | - |
+| -l <environment> | `fedora` or `testcontainer`<br><li>`fedora`: Execute the playbook on the running WSL distribution.</li><li>`testcontainer`: Start a Fedora container with Podman and execute the playbook.</li> |
+| -e @private.yml | Load parameters from the Vault file (`private.yml`). Details are provided below.<br>While not mandatory, it is recommended. |
+| --ask-vault-pass | Prompts for the Vault password.<br>Use this if the Vault is encrypted. |
 
-`dnf install git ansible python3-passlib`
+### Destroy Playground
 
-## Test play in container
+When specifying `-l testcontainer`, Podman automatically starts a Fedora container, but if a container named `testcontainer` already exists, it will be reused.
 
-`ansible-playbook -i inventories/hosts.ini -l testcontainer playbook.yml`
+To test in a fresh environment or remove the playground, use the following commands to delete the container:
 
-destory playground
 ```sh
 podman stop testcontainer
 podman rm testcontainer
 ```
 
-## Run with vault
+### Run with Vault
 
-create private.yml
-```yml
+When running the playbook, some parameters (such as the username and password to create) need to be provided at runtime. It is convenient to use `ansible-vault` to save these parameters in a file.
+
+Create the following YAML file, replacing the username and password with your own:
+
+```yaml
 user_name: user
 user_password: password
 user_salt: saltstring
@@ -47,27 +87,34 @@ user_git_email: user@example.com
 box_drive_path: C:/Users/UserName/Box
 ```
 
-encrypt
+Optionally, encrypt the Vault file. The example below assumes the Vault file is named `private.yml`:
 
-`ansible-vault encrypt private.yml`
-
-
+```sh
 ansible-vault encrypt private.yml
+```
 
-`ansible-playbook -i inventories/hosts.ini -l testcontainer playbook.yml -e @private.yml --ask-vault-pass`
+## Customize Playbook
 
-## Customize user .bashrc
+### Default User .bashrc
 
-Edit `roles/user_setup/files/append-bashrc.sh` as you like.
+To customize the default user's `.bashrc`, edit the `roles/user_setup/files/append-bashrc.sh` file.
 
-It will be written to the default user's .bashrc.
+### Add or Remove Installed Packages
 
-## Add or Remove install packages
+To modify the packages that are installed, edit the `roles/initial_setup/vars/main.yml` file.
 
-Edit `roles/initial_setup/vars/main.yml`
+### SSH Agent Relay
 
-## Feel free to customize various other aspects as you prefer.
+Running this playbook allows you to use the SSH Agent from Windows within WSL, which is especially beneficial for users who manage their private keys with tools like 1Password.
 
-- Add CLI tools other than Quarkus CLI
-- Drop the mounting task for Box Drive
-- and so on.
+Previously, this was achieved using `Npiperelay` and a socket service, but it is now done by invoking Windows executables directly from WSL.
+
+However, this method does not use the distribution's native SSH command, which has its pros and cons. Therefore, the tasks for installing `Npiperelay` are left as comments.
+
+### Further Customizations
+
+Feel free to customize any other aspects as you prefer:
+
+- Install additional tools besides the Quarkus CLI
+- Exclude the Box Drive mount task if you are not a Box Drive user
+- And so on...
