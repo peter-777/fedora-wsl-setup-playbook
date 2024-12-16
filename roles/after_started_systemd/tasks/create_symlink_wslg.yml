@@ -1,0 +1,30 @@
+---
+- name: Configure WSLg Socket Symlinks
+  block:
+    - name: Upload X11 Symlink Service Unit
+      ansible.builtin.template:
+        src: templates/wslg-x11-symlink.service.j2
+        dest: ~/.config/systemd/user/wslg-x11-symlink.service
+        mode: "0644"
+
+    - name: Enable X11 Symlink Service
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+        scope: user
+        name: wslg-x11-symlink.service
+        enabled: true
+        state: started
+
+    - name: Upload Wayland Symlink Service Unit
+      ansible.builtin.template:
+        src: templates/wslg-wayland-symlink.service.j2
+        dest: ~/.config/systemd/user/wslg-wayland-symlink.service
+        mode: "0644"
+
+    - name: Enable Wayland Symlink Service
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+        scope: user
+        name: wslg-wayland-symlink.service
+        enabled: true
+        state: started

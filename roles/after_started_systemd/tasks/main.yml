@@ -9,6 +9,9 @@
   become: true
   become_user: "{{ user_name }}"
   block:
+    - name: WSLg Socket
+      ansible.builtin.import_tasks: create_symlink_wslg.yml
+
     # - name: SSH-Agent
     #   ansible.builtin.import_tasks: npiperelay_socket.yml
 

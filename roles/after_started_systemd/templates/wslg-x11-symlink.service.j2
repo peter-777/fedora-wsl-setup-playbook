@@ -1,0 +1,12 @@
+[Unit]
+Description=Create symbolic link for /mnt/wslg/.X11-unix/X0
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/ln -sf /mnt/wslg/.X11-unix/X0 %T/.X11-unix/X0
+ExecStop=/bin/rm /tmp/.X11-unix/X0
+
+[Install]
+WantedBy=graphical.target

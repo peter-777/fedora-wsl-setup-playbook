@@ -1,0 +1,12 @@
+[Unit]
+Description=Create symbolic link for /mnt/wslg/runtime-dir/wayland-0
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/ln -sf /mnt/wslg/runtime-dir/wayland-0 %t/wayland-0
+ExecStop=/bin/rm /tmp/.X11-unix/X0
+
+[Install]
+WantedBy=graphical.target
