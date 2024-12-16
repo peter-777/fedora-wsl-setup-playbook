@@ -53,6 +53,13 @@
       tags:
         - initial
         - user
+    - name: Install Python3
+      ansible.builtin.raw: dnf5 install -y python3 python3-libdnf5
+      register: dnf5_output
+      changed_when: dnf5_output.rc != 0
+      tags:
+        - initial
+        - user
     - name: Gather facts
       ansible.builtin.gather_facts:
       tags:

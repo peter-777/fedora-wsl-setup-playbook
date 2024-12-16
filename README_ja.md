@@ -26,7 +26,7 @@ FedoraをWSLのディストリビューション使う人向けのセットア�
 1. プレイブックの実行に必要なパッケージをインストールします。
 
     ```sh
-    dnf install git ansible python3-passlib
+    dnf install git ansible python3-passlib python3-libdnf5
     ```
 
 1. このリポジトリをクローンします、

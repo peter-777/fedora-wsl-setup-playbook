@@ -31,7 +31,7 @@ For details, refer to the `main.yml` of each role.
 1. Install the packages required to execute the playbook:
 
     ```sh
-    dnf install git ansible python3-passlib
+    dnf install git ansible python3-passlib  python3-libdnf5
     ```
 
 1. Clone this repository:

@@ -3,11 +3,8 @@ initial_setup_packages:
   prerequire:
     - man
     - man-pages
-    - dnf5
     - dnf5-plugins
-    - python3-libdnf5
     - dnf-plugins-core # temporary for copr modules
-    - groff # temporarily add. Due to unknown reasons, installing groff fails with dnf5.
 
   main:
     - shadow-utils
@@ -23,7 +20,7 @@ initial_setup_packages:
     - wget
     - which
     - rsync
-    - neofetch
+    - fastfetch
     - bash-completion
     - podman
     - langpacks-ja
@@ -31,6 +28,6 @@ initial_setup_packages:
     - wslu
     - jbang
     - zip
-    - groff
     - iproute
     - clang
+    - ripgrep
