@@ -1,7 +1,23 @@
 ---
+- name: Check installed quarkus
+  ansible.builtin.stat:
+    path: ~/.jbang/bin/quarkus
+  register: check_quarkus
+
 - name: Install quarkus cli
-  ansible.builtin.shell:
-    cmd: |
-      jbang trust add https://repo1.maven.org/maven2/io/quarkus/quarkus-cli/
-      jbang app install --fresh --force quarkus@quarkusio
-    creates: ~/.jbang/bin/quarkus
+  when: not check_quarkus.stat.exists
+  block:
+    - name: Jbang install quarkus
+      ansible.builtin.shell:
+        cmd: |
+          jbang trust add https://repo1.maven.org/maven2/io/quarkus/quarkus-cli/
+          jbang app install --fresh --force quarkus@quarkusio
+        creates: ~/.jbang/bin/quarkus
+
+    - name: Set Shell Completion
+      ansible.builtin.shell:
+        cmd: |
+          jbang completion > ~/.local/share/bash-completion/completions/jbang.bash
+          PATH="$HOME/.jbang/bin:$PATH"
+          quarkus completion > ~/.local/share/bash-completion/completions/quarkus.bash
+      changed_when: true
