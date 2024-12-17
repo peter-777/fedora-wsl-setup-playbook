@@ -1,4 +1,10 @@
 ---
+- name: Ensure a systemd user directory
+  ansible.builtin.file:
+    path: ~/.config/systemd/user/
+    mode: "0755"
+    state: directory
+
 - name: Configure WSLg Socket Symlinks
   block:
     - name: Upload X11 Symlink Service Unit
