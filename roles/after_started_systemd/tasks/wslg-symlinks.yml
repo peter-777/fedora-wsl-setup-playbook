@@ -1,0 +1,22 @@
+---
+- name: Upload X11 tempfiles config
+  ansible.builtin.template:
+    src: templates/tempfiles.d-wslg.conf.j2
+    dest: /etc/tmpfiles.d/wslg.conf
+    mode: "0644"
+
+- name: Configure User tempfiles
+  become: true
+  become_user: "{{ user_name }}"
+  block:
+    - name: Ensure a user tmpfiles.d directory
+      ansible.builtin.file:
+        path: ~/.config/user-tmpfiles.d/
+        mode: "0755"
+        state: directory
+
+    - name: Upload User(wayland) tempfiles config
+      ansible.builtin.template:
+        src: templates/user-tempfiles.d-wslg.conf.j2
+        dest: ~/.config/user-tmpfiles.d/wslg.conf
+        mode: "0644"

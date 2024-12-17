@@ -5,12 +5,15 @@
 - name: Set timezone
   ansible.builtin.import_tasks: set_timezone.yml
 
+- name: WSLg Symlinks
+  ansible.builtin.import_tasks: wslg-symlinks.yml
+
 - name: User Service
   become: true
   become_user: "{{ user_name }}"
   block:
-    - name: WSLg Socket
-      ansible.builtin.import_tasks: create_symlink_wslg.yml
+    # - name: WSLg Socket
+    #   ansible.builtin.import_tasks: create_symlink_wslg.yml
 
     # - name: SSH-Agent
     #   ansible.builtin.import_tasks: npiperelay_socket.yml
