@@ -12,14 +12,14 @@
   become: true
   become_user: "{{ user_name }}"
   block:
-    - name: Customize .bashrc
-      ansible.builtin.import_tasks: customize_bashrc.yml
-
     - name: Quarkus Cli
       ansible.builtin.import_tasks: install_quarkuscli.yml
 
     - name: Rye
       ansible.builtin.import_tasks: install_rye.yml
+
+    - name: Uv
+      ansible.builtin.import_tasks: install_uv.yml
 
     - name: Config git
       ansible.builtin.import_tasks: configure_git.yml
@@ -32,3 +32,6 @@
 
     - name: Docker Compose
       ansible.builtin.import_tasks: install_compose.yml
+
+    - name: Customize .bashrc
+      ansible.builtin.import_tasks: customize_bashrc.yml

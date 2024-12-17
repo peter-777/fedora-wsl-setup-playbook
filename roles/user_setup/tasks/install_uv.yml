@@ -1,0 +1,44 @@
+---
+- name: Check installed uv
+  ansible.builtin.stat:
+    path: ~/.local/bin/uv
+  register: check_uv
+
+- name: Instell uv
+  when: not check_uv.stat.exists
+  block:
+    - name: Ensure a temporary directory for download exists
+      ansible.builtin.tempfile:
+        state: directory
+      register: temp_dir
+
+    - name: Get uv installer
+      ansible.builtin.get_url:
+        url: https://astral.sh/uv/install.sh
+        dest: "{{ temp_dir.path }}/uv.install.sh"
+        mode: "0700"
+      register: uv_installer
+
+    - name: Run uv installer
+      ansible.builtin.command:
+        cmd: "{{ uv_installer.dest }}"
+        creates: ~/.cargo/bin/uv
+
+    - name: Ensure a directory for bash-completion
+      ansible.builtin.file:
+        path: ~/.local/share/bash-completion/completions
+        state: directory
+        mode: "0755"
+
+    - name: Set Shell Completion
+      ansible.builtin.shell:
+        cmd: |
+          source ~/.profile
+          uv generate-shell-completion bash > ~/.local/share/bash-completion/completions/uv.bash
+      changed_when: true
+
+    - name: Remove the temporary directory
+      ansible.builtin.file:
+        path: "{{ temp_dir.path }}"
+        state: absent
+      when: temp_dir.path is defined
