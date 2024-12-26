@@ -13,4 +13,5 @@ environments = ["platform_system != 'Windows'", "platform_system == 'Windows'"]
 dev = [
     "ansible>=11.1.0",
     "ansible-lint>=6.8.7",
+    "passlib"
 ]

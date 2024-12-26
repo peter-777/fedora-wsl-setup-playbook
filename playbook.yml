@@ -50,18 +50,12 @@
         image: registry.fedoraproject.org/fedora:latest
         command: sleep infinity
         detach: true
-      tags:
-        - initial
-        - user
+      tags: always
     - name: Install Python3
       ansible.builtin.raw: dnf5 install -y python3 python3-libdnf5
       register: dnf5_output
       changed_when: dnf5_output.rc != 0
-      tags:
-        - initial
-        - user
+      tags: always
     - name: Gather facts
       ansible.builtin.gather_facts:
-      tags:
-        - initial
-        - user
+      tags: always
