@@ -14,6 +14,12 @@
           jbang app install --fresh --force quarkus@quarkusio
         creates: ~/.jbang/bin/quarkus
 
+    - name: Ensure a directory for bash-completion
+      ansible.builtin.file:
+        path: ~/.local/share/bash-completion/completions
+        state: directory
+        mode: "0755"
+
     - name: Set Shell Completion
       ansible.builtin.shell:
         cmd: |
