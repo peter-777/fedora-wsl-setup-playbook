@@ -23,15 +23,51 @@
   community.general.copr:
     name: "@jbangdev/jbang"
 
-- name: Add Adoptium Repository
-  ansible.builtin.yum_repository:
-    name: Adoptium
-    description: Adoptioum repo
-    baseurl: https://packages.adoptium.net/artifactory/rpm/{{ ansible_facts['distribution'].lower() }}/$releasever/$basearch
-    enabled: true
-    gpgcheck: true
-    gpgkey:
-      - https://packages.adoptium.net/artifactory/api/gpg/key/public
+- name: Configure Adoptium Repository
+  block:
+    - name: Install Adoptium Rpository
+      ansible.builtin.dnf5:
+        name: adoptium-temurin-java-repository
+        state: latest
+
+    # https://github.com/ansible-collections/community.general/issues/9127
+    # - name: Enable Adoptium Repository
+    #   community.general.dnf_config_manager:
+    #     name: adoptium-temurin-java-repository
+    #     state: enabled
+
+    - name: Enable Adoptium Repository
+      community.general.ini_file:
+        path: /etc/yum.repos.d/adoptium-temurin-java-repository.repo
+        section: adoptium-temurin-java-repository
+        option: enabled
+        value: 1
+        create: false
+
+- name: Configure Terra Repository
+  block:
+    - name: Add temporary repo
+      ansible.builtin.yum_repository:
+        name: tempterra
+        description: Temp Terra $releasever
+        baseurl: https://repos.fyralabs.com/terra$releasever
+        enabled: true
+        gpgcheck: true
+        gpgkey:
+          - https://repos.fyralabs.com/terra$releasever/key.asc
+        repo_gpgcheck: true
+
+    - name: Install Terra Rpository
+      ansible.builtin.dnf5:
+        name: terra-release
+        enablerepo: tempterra
+        disable_gpg_check: true
+        state: latest
+
+    - name: Remove temporary repo
+      ansible.builtin.yum_repository:
+        name: tempterra
+        state: absent
 
 - name: Update packages
   ansible.builtin.dnf5:
@@ -40,7 +76,12 @@
     state: latest
 
 - name: Install packages
+  notify:
+    - Remove temporary packages
   ansible.builtin.dnf5:
     name: "{{ initial_setup_packages['main'] }}"
     update_cache: true
     state: latest
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

@@ -17,7 +17,7 @@
         path: /etc/rpm/macros.image-language-conf
         state: absent
 
-    - name: Install man and dnf5
+    - name: Install prerequire packages
       ansible.builtin.dnf5:
         name: "{{ initial_setup_packages['prerequire'] }}"
         state: latest

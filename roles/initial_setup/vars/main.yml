@@ -4,7 +4,7 @@ initial_setup_packages:
     - man
     - man-pages
     - dnf5-plugins
-    - dnf-plugins-core # temporary for copr modules
+    - python3-dnf
 
   main:
     - shadow-utils
@@ -31,3 +31,7 @@ initial_setup_packages:
     - iproute
     - clang
     - ripgrep
+    - gping
+
+  removes:
+    - python3-dnf

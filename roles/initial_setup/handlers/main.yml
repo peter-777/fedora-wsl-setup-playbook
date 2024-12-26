@@ -3,3 +3,9 @@
   ansible.builtin.shell:
     cmd: for pkg in $(dnf5 repoquery --installed --qf "%{name}\n"); do dnf5 reinstall -qy $pkg; done
   changed_when: true
+
+- name: Remove temporary packages
+  ansible.builtin.dnf5:
+    name: "{{ initial_setup_packages['removes'] }}"
+    autoremove: true
+    state: absent
